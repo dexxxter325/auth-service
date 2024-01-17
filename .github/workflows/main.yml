@@ -1,29 +1,30 @@
-name: CI
+name: CI #имя на гитхабе
 
-on:
-  push:
+on:  #условия для выполнения данного файла.
+  push: #Он будет запускаться при пуше(отправка изменений в локальной ветке) в ветку мастер
     branches:
       - main
-  pull_request:
+  pull_request: #он будет запускаться при pull запросе - запрос на внесение изменений из одной ветки в другую
     branches:
       - main
 
 env:
-  IMAGE_NAME: "crud-api"
+  IMAGE_NAME: "crud-api" #имя docker-образа
   CONTAINER_NAME: "crud_api"
   ENV_FILE_PATH: "./crud-api/.env.prod"
   LOGS_PATH: "/root/crud-api/api/logs/prod"
+  #$GITHUB_SHA-уникальный хеш последнего коммита в репозитории на GitHub.
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout main
-        uses: actions/checkout@v2
+  build: #имя процесса
+    runs-on: ubuntu-latest #удаленная машина(от GitHub),на кот.будут выполняться команды
+    steps: # список шагов для выполнения в рамках данного джоба.
+      - name: Checkout master #название шага
+        uses: actions/checkout@v2 #переключаемся в нашу ветку main на удал.машине
       - name: Set up Go 1.21
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v2 #устанавливаем на удаленную машину инструментарий Go
         with:
-          go-version: 1.21
+          go-version: 1.21 #параметры для установки
       - name: Test
         run: go test ./...
 
@@ -39,23 +40,26 @@ jobs:
         uses: actions/checkout@v2
       - name: Deploy to Remote Server
         run: |
-            # Stop running container
-            docker stop $(echo $CONTAINER_NAME) || true
-
-            # Remove old container
-            docker rm $(echo $CONTAINER_NAME) || true
-
-            # Run a new container from a new image
-            docker run --name $(echo $CONTAINER_NAME) \
+          # Stop running container
+          docker stop $(echo $CONTAINER_NAME) || true
+          
+          # Remove old container
+          docker rm $(echo $CONTAINER_NAME) || true
+          
+          # Run a new container from a new image
+          docker run --name $(echo $CONTAINER_NAME) \
             -e POSTGRES_PASSWORD=qwerty \
             -e POSTGRES_USER=postgres \
             -e POSTGRES_DB=postgres \
             -e POSTGRES_HOST=localhost \
             -p 5432:5432 \
-
-         sleep 31s
+            -d $(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
           
-         docker exec -it $(echo $CONTAINER_NAME) migrate -path ./schema -database "postgres://postgres:qwerty@localhost:5432/postgres?sslmode=disable" up
+          # Wait for PostgreSQL to be ready
+          sleep 30s
+          
+          # Run database migrations
+          docker exec -it $(echo $CONTAINER_NAME) migrate -path ./schema -database "postgres://postgres:qwerty@localhost:5432/postgres?sslmode=disable" up
         
 
 
