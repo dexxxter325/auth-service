@@ -15,7 +15,7 @@ env:
   LOGS_PATH: "/root/crud-api/api/logs/prod"
   #$GITHUB_SHA-уникальный хеш последнего коммита в репозитории на GitHub.
 
--jobs:
+jobs:
   build: #имя процесса
     runs-on: ubuntu-latest #удаленная машина(от GitHub),на кот.будут выполняться команды
     steps: # список шагов для выполнения в рамках данного джоба.
