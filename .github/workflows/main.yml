@@ -38,6 +38,10 @@ jobs:
     steps:
       - name: Deploy locally
         uses: actions/checkout@v2
+      - name: Install migrate
+        run: |
+            curl -L https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz | tar xvz
+            sudo mv migrate.linux-amd64 /usr/local/bin/migrate
       - name: Deploy to Remote Server
         run: |
           # Stop running container
