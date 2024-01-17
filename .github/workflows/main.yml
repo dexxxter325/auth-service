@@ -57,7 +57,7 @@ jobs:
           -e POSTGRES_DB=postgres \
           -e POSTGRES_HOST=localhost \
           -p 5432:5432 \
-          crud_api:latest
+        
 
           sleep 30s
           
