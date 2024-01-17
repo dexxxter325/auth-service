@@ -12,3 +12,6 @@ RUN curl -L https://github.com/golang-migrate/migrate/releases/download/v4.14.1/
 RUN mv migrate.linux-amd64 /usr/local/bin/migrate
 
 CMD ["./CRUD_API"]
+
+
+#Dockerfile-файл с настройками и зависимостями приложения.Докер-образ(изобр.(image))-это результат команды docker build(содержащий все необх.настройки)

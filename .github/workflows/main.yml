@@ -9,11 +9,11 @@ on:  #условия для выполнения данного файла.
       - main
 
 env:
-  IMAGE_NAME: "crud-api" #имя docker-образа
+  IMAGE_NAME: "crud-apo" #имя docker-образа
   CONTAINER_NAME: "crud_api"
   ENV_FILE_PATH: "./crud-api/.env.prod"
   LOGS_PATH: "/root/crud-api/api/logs/prod"
-  #$GITHUB_SHA-уникальный хеш последнего коммита в репозитории на GitHub.
+  #$GITHUB_SHA-уникальный хеш последнего коммита в репозитории на GitHub.fdfsdf
 
 jobs:
   build: #имя процесса
