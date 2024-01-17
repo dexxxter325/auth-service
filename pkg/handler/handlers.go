@@ -2,7 +2,6 @@ package handler
 
 import (
 	"CRUD_API"
-	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"math/rand"
@@ -144,17 +143,17 @@ func (h *Handler) UpdateProduct(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error marshaling product to JSON in update": "err in service"})
 		return
 	}
-	cacheKey := fmt.Sprintf("product:%d", id)
+	/*cacheKey := fmt.Sprintf("product:%d", id)
 	jsonProduct, err := json.Marshal(UpdatedProduct)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	expiration := cacheTTl + time.Duration(rand.Intn(21)-10)*time.Second
+	//expiration := cacheTTl + time.Duration(rand.Intn(21)-10)*time.Second
 	err = RedisClient.Set(c, cacheKey, jsonProduct, expiration).Err()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error in set data to redis(update)": err.Error()})
-	}
+	}*/
 
 	c.JSON(200, gin.H{"product(updated successfully)": UpdatedProduct})
 }
@@ -181,12 +180,12 @@ func (h *Handler) DeleteProduct(c *gin.Context) {
 		return
 	}
 
-	cacheKey := fmt.Sprintf("product:%d", id)
+	/*cacheKey := fmt.Sprintf("product:%d", id)
 	err = RedisClient.Del(c, cacheKey).Err()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"err in delete data from redis": err.Error()})
 		return
-	}
+	}*/
 
 	c.JSON(http.StatusOK, "deleted successfully")
 }

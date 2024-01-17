@@ -61,7 +61,6 @@ func (c *CacheKey) Get(key string) interface{} {
 	cacheEntry, ok := c.cache[key]
 	if !ok {
 		// знач не найдены по ключу
-		fmt.Println("cache data not found!")
 		return nil
 	}
 

@@ -31,7 +31,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("err in connecttodb:%s", err)
 	}
-	handler.InitRedis()
+	//handler.InitRedis()
 	repos := repository.NewRepository(db)
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
