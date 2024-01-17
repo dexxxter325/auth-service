@@ -42,6 +42,9 @@ jobs:
         run: |
             curl -L https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz | tar xvz
             sudo mv migrate.linux-amd64 /usr/local/bin/migrate
+      - name: download migrate
+        run: |
+          migrate.linux-amd64 /usr/local/bin/migrate
       - name: Deploy to Remote Server
         run: |
           # Stop running container
@@ -58,10 +61,9 @@ jobs:
           -e POSTGRES_HOST=localhost \
           -p 5432:5432 \
 
-          sleep 31s
+          sleep 30s
           
-          docker exec -it $(echo $CONTAINER_NAME) /usr/local/bin/migrate -path ./schema -database "postgres://postgres:qwerty@localhost:5432/postgres?sslmode=disable" up
-
+          docker exec -it $(echo $CONTAINER_NAME) migrate -path ./schema -database "postgres://postgres:qwerty@localhost:5432/postgres?sslmode=disable" up
         
 
 
