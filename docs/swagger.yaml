@@ -1,0 +1,215 @@
+basePath: /
+definitions:
+  handler.CreateProductRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - description
+    - name
+    type: object
+  handler.RefreshTokenRequest:
+    properties:
+      refresh_token:
+        type: string
+    required:
+    - refresh_token
+    type: object
+  handler.SignInRequest:
+    properties:
+      id:
+        type: integer
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - id
+    - password
+    - username
+    type: object
+  handler.SignUpRequest:
+    properties:
+      name:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - name
+    - password
+    - username
+    type: object
+  handler.UpdateProductRequest:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+    required:
+    - description
+    - name
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Welcome
+  title: CRUD API
+  version: "1.0"
+paths:
+  /api/product:
+    get:
+      consumes:
+      - application/json
+      description: readallproducts!
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: ReadAllProducts
+      tags:
+      - product
+    post:
+      consumes:
+      - application/json
+      description: create product
+      parameters:
+      - description: product info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handler.CreateProductRequest'
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: CreateProduct
+      tags:
+      - product
+  /api/product/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete product by ID
+      parameters:
+      - description: fill ID!
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: DeleteProduct
+      tags:
+      - product
+    get:
+      consumes:
+      - application/json
+      description: readProductById!!
+      parameters:
+      - description: write id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: ReadProductById
+      tags:
+      - product
+    put:
+      consumes:
+      - application/json
+      description: Update product by ID
+      parameters:
+      - description: product info
+        in: body
+        name: name,description
+        required: true
+        schema:
+          $ref: '#/definitions/handler.UpdateProductRequest'
+      - description: product info
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      security:
+      - ApiKeyAuth: []
+      summary: UpdateProduct
+      tags:
+      - product
+  /auth/refresh-tokens:
+    post:
+      consumes:
+      - application/json
+      description: refreshtoken pair
+      parameters:
+      - description: Refresh token
+        in: body
+        name: refresh_token
+        required: true
+        schema:
+          $ref: '#/definitions/handler.RefreshTokenRequest'
+      produces:
+      - application/json
+      responses: {}
+      summary: Refresh
+      tags:
+      - auth
+  /auth/sign-in:
+    post:
+      consumes:
+      - application/json
+      description: login
+      parameters:
+      - description: credentials
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handler.SignInRequest'
+      produces:
+      - application/json
+      responses: {}
+      summary: signIn
+      tags:
+      - auth
+  /auth/sign-up:
+    post:
+      consumes:
+      - application/json
+      description: create account
+      parameters:
+      - description: account info
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/handler.SignUpRequest'
+      produces:
+      - application/json
+      responses: {}
+      summary: signUp
+      tags:
+      - auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
