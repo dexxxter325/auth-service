@@ -9,11 +9,11 @@ on:  #условия для выполнения данного файла.
       - main
 
 env:
-  IMAGE_NAME: "crud-apo" #имя docker-образа
+  IMAGE_NAME: "crud-api" #имя docker-образа
   CONTAINER_NAME: "crud_api"
   ENV_FILE_PATH: "./crud-api/.env.prod"
   LOGS_PATH: "/root/crud-api/api/logs/prod"
-  #$GITHUB_SHA-уникальный хеш последнего коммита в репозитории на GitHub.fdfsdf
+  #$GITHUB_SHA-уникальный хеш последнего коммита в репозитории на GitHub.
 
 jobs:
   build: #имя процесса
@@ -45,10 +45,10 @@ jobs:
       - name: Deploy to Remote Server
         run: |
           # Stop running container
-          docker stop $(echo $CONTAINER_NAME) || true
+          docker stop $(echo $CONTAINER_NAME) flaw1ess/crud_api || true
 
           # Remove old container
-          docker rm $(echo $CONTAINER_NAME) || true
+          docker rm $(echo $CONTAINER_NAME) flaw1ess/crud_api || true
 
             # Run a new container from a new image
           docker run --name $(echo $CONTAINER_NAME) \
@@ -57,6 +57,7 @@ jobs:
           -e POSTGRES_DB=postgres \
           -e POSTGRES_HOST=localhost \
           -p 5432:5432 \
+          flaw1ess/crud_api
         
 
           sleep 30s
