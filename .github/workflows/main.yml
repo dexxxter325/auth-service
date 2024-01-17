@@ -42,37 +42,27 @@ jobs:
     steps:
       - name: Deploy locally
         uses: actions/checkout@v2
-      - name: Install migrate
-        run: |
-          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz | tar xvz
-          sudo mv migrate.linux-amd64 /usr/local/bin/migrate
       - name: Deploy to Remote Server
         run: |
-          # Stop running container if it exists
-          if docker ps -a --format '{{.Names}}' | grep -Eq "^$(echo $CONTAINER_NAME)\$"; then
-            docker stop $(echo $CONTAINER_NAME) || true
-          fi
+          # Stop running container
+          docker stop $(echo $CONTAINER_NAME) || true
 
-          # Remove old container if it exists
-          if docker ps -a --format '{{.Names}}' | grep -Eq "^$(echo $CONTAINER_NAME)\$"; then
-            docker rm $(echo $CONTAINER_NAME) || true
-          fi
+          # Remove old container
+          docker rm $(echo $CONTAINER_NAME) || true
 
-          # Run a new container from a new image
+            # Run a new container from a new image
           docker run --name $(echo $CONTAINER_NAME) \
-            -e POSTGRES_PASSWORD=qwerty \
-            -e POSTGRES_USER=postgres \
-            -e POSTGRES_DB=postgres \
-            -e POSTGRES_HOST=localhost \
-            -p 5432:5432 \
-            -d $(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
+          -e POSTGRES_PASSWORD=qwerty \
+          -e POSTGRES_USER=postgres \
+          -e POSTGRES_DB=postgres \
+          -e POSTGRES_HOST=localhost \
+          -p 5432:5432 \
+          crud_api:latest
 
-          # Wait for PostgreSQL to be ready
-          sleep 31s
-
-          # Run database migrations
-          docker exec -it $(echo $CONTAINER_NAME) /usr/local/bin/migrate -path ./schema -database "postgres://postgres:qwerty@localhost:5432/postgres?sslmode=disable" up
-  
+          sleep 30s
+          
+          docker exec -it $(echo $CONTAINER_NAME) migrate -path ./schema -database "postgres://postgres:qwerty@localhost:5432/postgres?sslmode=disable" up
+        
 
 
 
