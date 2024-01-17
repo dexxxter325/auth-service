@@ -42,9 +42,10 @@ jobs:
         run: |
           # Stop running container
           docker stop $(echo $CONTAINER_NAME) || true
-          
+
           # Remove old container
           docker rm $(echo $CONTAINER_NAME) || true
+
             # Run a new container from a new image
           docker run --name $(echo $CONTAINER_NAME) \
           -e POSTGRES_PASSWORD=qwerty \
