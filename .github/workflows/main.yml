@@ -40,11 +40,6 @@ env:
     steps:
       - name: Deploy locally
         uses: actions/checkout@v2
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSHKEY }}
-          port: ${{ secrets.PORT }}
       - name: Deploy to Remote Server
         run: |
             # Stop running container
