@@ -45,7 +45,6 @@ env:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSHKEY }}
           port: ${{ secrets.PORT }}
-          envs: IMAGE_NAME,LOGS_PATH,ENV_FILE_PATH,CONTAINER_NAME
       - name: Deploy to Remote Server
         run: |
             # Stop running container
