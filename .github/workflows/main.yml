@@ -11,7 +11,7 @@ on:  #условия для выполнения данного файла.
 env:
   REGISTRY: "docker.io"
   IMAGE_NAME: "flaw1ess/crud_api" #имя docker-образа
-  CONTAINER_NAME: "crud_api"
+  CONTAINER_NAME: "flaw1ess/crud_api"
   ENV_FILE_PATH: "./crud-api/.env.prod"
   LOGS_PATH: "/root/crud-api/api/logs/prod"
   #$GITHUB_SHA-уникальный хеш последнего коммита в репозитории на GitHub.
