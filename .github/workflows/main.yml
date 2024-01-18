@@ -9,7 +9,7 @@ on:  #условия для выполнения данного файла.
       - main
 
 env:
-  REGISTRY: "hub.docker.com/repository/docker"
+  REGISTRY: "docker.io"
   IMAGE_NAME: "flaw1ess/crud_api" #имя docker-образа
   CONTAINER_NAME: "crud_api"
   ENV_FILE_PATH: "./crud-api/.env.prod"
@@ -41,11 +41,12 @@ jobs:
       - name: Checkout main
         uses: actions/checkout@v2
       - name: Build container image
-        run: docker build -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):latest .
+        run: docker build -t $REGISTRY/$IMAGE_NAME:latest .
       - name: Log in to Docker Hub Container Registry
         run: docker login -u flaw1ess -p Topg778877
-      - name: Push image to D0cKeR HuB Container Registry
-        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):latest
+      - name: Push image to Docker Hub Container Registry
+        run: docker push $REGISTRY/$IMAGE_NAME:latest
+
 
 
   deploy:
