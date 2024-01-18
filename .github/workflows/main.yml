@@ -9,17 +9,18 @@ on:  #условия для выполнения данного файла.
       - main
 
 env:
-  IMAGE_NAME: "crud-api" #имя docker-образа
+  REGISTRY: "hub.docker.com/repository/docker/flaw1ess/crud_api"
+  IMAGE_NAME: "crud_api" #имя docker-образа
   CONTAINER_NAME: "crud_api"
   ENV_FILE_PATH: "./crud-api/.env.prod"
   LOGS_PATH: "/root/crud-api/api/logs/prod"
   #$GITHUB_SHA-уникальный хеш последнего коммита в репозитории на GitHub.
 
 jobs:
-  build: #имя процесса
+  test: #имя процесса
     runs-on: ubuntu-latest #удаленная машина(от GitHub),на кот.будут выполняться команды
     steps: # список шагов для выполнения в рамках данного джоба.
-      - name: Checkout master #название шага
+      - name: Checkout main #название шага
         uses: actions/checkout@v2 #переключаемся в нашу ветку main на удал.машине
       - name: Set up Go 1.21
         uses: actions/setup-go@v2 #устанавливаем на удаленную машину инструментарий Go
@@ -33,17 +34,30 @@ jobs:
         run: go test ./...
 
 #нам нужно облако развертывания приложения ,тк оно нам создаet эндпоинт для нашего приложения, который будет доступен в интернете.После развертывания ,я получаю URL-адресс приложения
+  build_and_push:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v2
+      - name: Build container image
+        run: docker build -t $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7) .
+      - name: Log in to Docker Hub Container Registry
+        run: docker login -u flaw1ess -p Topg778877
+      - name: Push image to D0cKeR HuB Container Registry
+        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
 
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: build_and_push
     if: github.event_name == 'push'
     steps:
-      - name: Login to Docker Hub
-        run: docker login -u flaw1ess -p Topg778877
+      #- name: Login to Docker Hub
+       # run: docker login -u flaw1ess -p Topg778877
       - name: Reboot Container
         run: |
+          docker login -u flaw1ess -p Topg778877
           # Stop running container
           docker stop $(echo $CONTAINER_NAME) flaw1ess/crud_api || true
   
