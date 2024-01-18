@@ -9,7 +9,7 @@ on:  #условия для выполнения данного файла.
       - main
 
 env:
-  REGISTRY: "hub.docker.com/repository/docker/flaw1ess/crud_api"
+  REGISTRY: "hub.docker.com/repository/docker/flaw1ess"
   IMAGE_NAME: "crud_api" #имя docker-образа
   CONTAINER_NAME: "crud_api"
   ENV_FILE_PATH: "./crud-api/.env.prod"
