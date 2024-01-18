@@ -66,6 +66,7 @@ jobs:
   
             # Run a new container from a new image
           docker run --name $(echo $CONTAINER_NAME) \
+          --env-file $(echo $ENV_FILE_PATH) \
           -e POSTGRES_PASSWORD=qwerty \
           -e POSTGRES_USER=postgres \
           -e POSTGRES_DB=postgres \
