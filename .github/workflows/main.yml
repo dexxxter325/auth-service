@@ -42,7 +42,7 @@ jobs:
     steps:
       - name: Login to Docker Hub
         run: docker login -u flaw1ess -p Topg778877
-      - name: Build and Push Docker Image
+      - name: Reboot Container
         run: |
           # Stop running container
           docker stop $(echo $CONTAINER_NAME) flaw1ess/crud_api || true
@@ -55,7 +55,7 @@ jobs:
           -e POSTGRES_PASSWORD=qwerty \
           -e POSTGRES_USER=postgres \
           -e POSTGRES_DB=postgres \
-          -e POSTGRES_HOST=localhost \
+          -e POSTGRES_HOST=172.17.0.2 \
           -p 5432:5432 \
           flaw1ess/crud_api
           
