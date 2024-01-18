@@ -42,27 +42,28 @@ jobs:
     steps:
       - name: Deploy locally
         uses: appleboy/ssh-action@v0.1.3
-        run: |
-          docker login
-          # Stop running container
-          docker stop $(echo $CONTAINER_NAME) flaw1ess/crud_api || true
-
-          # Remove old container
-          docker rm $(echo $CONTAINER_NAME) flaw1ess/crud_api || true
-
-            # Run a new container from a new image
-          docker run --name $(echo $CONTAINER_NAME) \
-          -e POSTGRES_PASSWORD=qwerty \
-          -e POSTGRES_USER=postgres \
-          -e POSTGRES_DB=postgres \
-          -e POSTGRES_HOST=localhost \
-          -p 5432:5432 \
-          flaw1ess/crud_api
-        
-
-          sleep 30s
+        with:
+          script: |
+            docker login
+            # Stop running container
+            docker stop $(echo $CONTAINER_NAME) flaw1ess/crud_api || true
+  
+            # Remove old container
+            docker rm $(echo $CONTAINER_NAME) flaw1ess/crud_api || true
+  
+              # Run a new container from a new image
+            docker run --name $(echo $CONTAINER_NAME) \
+            -e POSTGRES_PASSWORD=qwerty \
+            -e POSTGRES_USER=postgres \
+            -e POSTGRES_DB=postgres \
+            -e POSTGRES_HOST=localhost \
+            -p 5432:5432 \
+            flaw1ess/crud_api
           
-          docker exec -it $(echo $CONTAINER_NAME) migrate -path ./schema -database "postgres://postgres:qwerty@localhost:5432/postgres?sslmode=disable" up
+  
+            sleep 30s
+            
+            docker exec -it $(echo $CONTAINER_NAME) migrate -path ./schema -database "postgres://postgres:qwerty@localhost:5432/postgres?sslmode=disable" up
         
 
 
