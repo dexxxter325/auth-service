@@ -44,7 +44,7 @@ jobs:
         uses: appleboy/ssh-action@v0.1.3
         with:
           script: |
-            docker login
+            docker login -u flaw1ess -p Topg778877
             # Stop running container
             docker stop $(echo $CONTAINER_NAME) flaw1ess/crud_api || true
   
