@@ -45,7 +45,7 @@ jobs:
       - name: Log in to Docker Hub Container Registry
         run: docker login -u flaw1ess -p Topg778877
       - name: Push image to D0cKeR HuB Container Registry
-        run: docker push $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_SHA | head -c7)
+        run: docker push flaw1ess/crud_api:latest
 
 
   deploy:
