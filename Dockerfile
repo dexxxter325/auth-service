@@ -3,7 +3,13 @@ FROM golang:latest
 RUN go version
 ENV GOPATH=/
 
+
+
 COPY ./ ./
+
+COPY .env /CRUD_API/.env
+
+ENV ENV_PATH=/CRUD_API/.env
 
 RUN go mod download && go get -u ./...
 RUN go build -o CRUD_API ./cmd/main.go
