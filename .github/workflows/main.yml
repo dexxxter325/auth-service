@@ -56,6 +56,9 @@ jobs:
       - name: Reboot Container
         run: |
           docker login -u flaw1ess -p Topg778877 
+          
+          docker pull $REGISTRY/$IMAGE_NAME:latest
+          
           # Stop running container
           docker stop $CONTAINER_NAME 
   
