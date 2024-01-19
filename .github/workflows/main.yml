@@ -59,15 +59,13 @@ jobs:
     needs: build_and_push
     if: github.event_name == 'push'
     steps:
-      - name: Deploy to Digital Ocean droplet via SSH action
+      - name: Update server buy ssh
         uses: appleboy/ssh-action@v0.1.3
         with:
           username: flaw1ess
           password: Topg778877
           script: |
             docker login -u flaw1ess -p Topg778877 
-            
-            docker pull $REGISTRY/$IMAGE_NAME:latest
             
             # Stop running container
             docker stop $CONTAINER_NAME || true
