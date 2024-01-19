@@ -26,10 +26,7 @@ jobs:
         with:
           go-version: 1.21 #параметры для установки
 
-      - name: Install migrate
-        run: |
-            curl -L https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz | tar xvz
-            sudo mv migrate.linux-amd64 /usr/local/bin/migrate
+
 
       - name: Test
         run: go test ./...
@@ -42,16 +39,16 @@ jobs:
       - name: Checkout main
         uses: actions/checkout@v2
 
+      - name: Build container image #создаем наш докер образ на удал.машине
+        run: docker build -t $REGISTRY/$IMAGE_NAME:latest .
+
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build container image
-        run: docker build -t $REGISTRY/$IMAGE_NAME:latest .
-
-      - name: Push image to Docker Hub Container Registry
+      - name: Push image to Docker Hub Container Registry #пушим(отправляем) новую версию изобр. в DockerHub
         run: docker push $REGISTRY/$IMAGE_NAME:latest
 
 
@@ -65,13 +62,13 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKER_USERNAME }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Stop and remove the existing container (if exists)
         run: docker stop $CONTAINER_NAME || true && docker rm $CONTAINER_NAME || true
 
-      - name: Run a new container from the pulled image
+      - name: Run a new container from the pulled image #запускаем новый контейнер,основываясь на запушенном в DockerHub образе
         run: |
           docker run -d \
             --name $CONTAINER_NAME \
