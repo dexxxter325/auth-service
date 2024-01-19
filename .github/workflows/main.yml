@@ -57,10 +57,10 @@ jobs:
         run: |
           docker login -u flaw1ess -p Topg778877 
           # Stop running container
-          docker stop $CONTAINER_NAME || true
+          docker stop $CONTAINER_NAME 
   
           # Remove old container
-          docker rm $CONTAINER_NAME || true
+          docker rm $CONTAINER_NAME 
   
             # Run a new container from a new image
           docker run -d -it --name $CONTAINER_NAME -p 80:80 $REGISTRY/$IMAGE_NAME:latest
