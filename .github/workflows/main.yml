@@ -59,20 +59,24 @@ jobs:
     needs: build_and_push
     if: github.event_name == 'push'
     steps:
-      - name: Reboot Container
-        run: |
-          docker login -u flaw1ess -p Topg778877 
-          
-          docker pull $REGISTRY/$IMAGE_NAME:latest
-          
-          # Stop running container
-          docker stop $CONTAINER_NAME || true
-  
-          # Remove old container
-          docker rm $CONTAINER_NAME || true
-  
-            # Run a new container from a new image
-          docker run -d --name $CONTAINER_NAME -p 80:80 $REGISTRY/$IMAGE_NAME:latest
+      - name: Deploy to Digital Ocean droplet via SSH action
+        uses: appleboy/ssh-action@v0.1.3
+        with:
+          username: flaw1ess
+          password: Topg778877
+          script: |
+            docker login -u flaw1ess -p Topg778877 
+            
+            docker pull $REGISTRY/$IMAGE_NAME:latest
+            
+            # Stop running container
+            docker stop $CONTAINER_NAME || true
+    
+            # Remove old container
+            docker rm $CONTAINER_NAME || true
+    
+              # Run a new container from a new image
+            docker run -d --name $CONTAINER_NAME -p 80:80 $REGISTRY/$IMAGE_NAME:latest
           
         
 
