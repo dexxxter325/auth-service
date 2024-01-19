@@ -1,7 +1,7 @@
 name: CI #имя на гитхабе
 
 on:  #условия для выполнения данного файла.
-  push: #Он будет запускаться при пуше(отправка изменений в локальной ветке) в ветку мастер
+  push: #Он будет запускаться при пуше(отправка изменений из локальной ветки) в ветку main
     branches:
       - main
   pull_request: #он будет запускаться при pull запросе - запрос на внесение изменений из одной ветки в другую
@@ -60,13 +60,13 @@ jobs:
           docker pull $REGISTRY/$IMAGE_NAME:latest
           
           # Stop running container
-          docker stop $REGISTRY/$IMAGE_NAME:latest
+          docker stop $REGISTRY/$IMAGE_NAME
   
           # Remove old container
-          docker rm $REGISTRY/$IMAGE_NAME:latest
+          docker rm $REGISTRY/$IMAGE_NAME
   
             # Run a new container from a new image
-          docker run -d --name $REGISTRY/$IMAGE_NAME:latest -p 80:80 $REGISTRY/$IMAGE_NAME:latest
+          docker run -d --name $REGISTRY/$IMAGE_NAME -p 80:80 $REGISTRY/$IMAGE_NAME:latest
           
         
 
