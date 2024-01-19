@@ -1,13 +1,21 @@
-FROM golang:latest
+FROM golang:1.21-alpine3.19 AS builder
 
 RUN go version
-
 
 COPY . /CRUD_API
 WORKDIR /CRUD_API
 
 RUN go mod download && go get -u ./...
-RUN go build -o CRUD_API ./cmd/main.go
+RUN go build -o ./bin/api ./cmd/main.go
+
+#lightweight docker container with binary
+FROM alpine:latest
+
+WORKDIR /root/
+
+COPY --from=0 /CRUD_API/bin/api .
+
+EXPOSE 80
 
 CMD ["./CRUD_API"]
 

@@ -9,10 +9,10 @@ on:  #условия для выполнения данного файла.
       - main
 
 env:
-  TAG_NAME: "latest"
   REGISTRY: "docker.io/flaw1ess"
   IMAGE_NAME: "crud_api" #имя docker-образа
   CONTAINER_NAME: "crud_api"
+  TAG_NAME: "latest"
 
 jobs:
   test: #имя процесса
@@ -59,10 +59,8 @@ jobs:
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/crud_api:latest
 
-
       #- name: Push image to Docker Hub Container Registry #пушим(отправляем) новую версию изобр. в DockerHub
        # run: docker push $REGISTRY/$IMAGE_NAME:$TAG_NAME
-
 
   deploy:
     runs-on: ubuntu-latest
