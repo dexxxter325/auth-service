@@ -57,7 +57,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/$CONTAINER_NAME:$TAG_NAME
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/crud_api:latest
 
 
       #- name: Push image to Docker Hub Container Registry #пушим(отправляем) новую версию изобр. в DockerHub
