@@ -57,7 +57,7 @@ jobs:
        # run: docker login -u flaw1ess -p Topg778877
       - name: Reboot Container
         run: |
-          docker login -u flaw1ess -p Topg778877 -it
+          docker login -u flaw1ess -p Topg778877 
           # Stop running container
           docker stop $CONTAINER_NAME || true
   
