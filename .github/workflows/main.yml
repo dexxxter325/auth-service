@@ -60,13 +60,13 @@ jobs:
           docker pull $REGISTRY/$IMAGE_NAME:latest
           
           # Stop running container
-          docker stop $CONTAINER_NAME 
+          docker stop $REGISTRY/$IMAGE_NAME:latest
   
           # Remove old container
-          docker rm $CONTAINER_NAME 
+          docker rm $REGISTRY/$IMAGE_NAME:latest
   
             # Run a new container from a new image
-          docker run -d -it --name $CONTAINER_NAME -p 80:80 $REGISTRY/$IMAGE_NAME:latest
+          docker run -d --name $REGISTRY/$IMAGE_NAME:latest -p 80:80 $REGISTRY/$IMAGE_NAME:latest
           
         
 
