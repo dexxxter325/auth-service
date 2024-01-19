@@ -12,8 +12,6 @@ env:
   REGISTRY: "docker.io/flaw1ess"
   IMAGE_NAME: "crud_api" #имя docker-образа
   CONTAINER_NAME: "crud_api"
-  ENV_FILE_PATH: "./CRUD_API/.env"
-  LOGS_PATH: "/root/crud-api/api/logs/prod"
   #$GITHUB_SHA-уникальный хеш последнего коммита в репозитории на GitHub.
 
 jobs:
@@ -69,9 +67,6 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Pull Docker image from Docker Hub
-        run: docker pull flaw1ess/crud_api:latest
 
       - name: Stop and remove the existing container (if exists)
         run: docker stop crud_api || true && docker rm crud_api || true
