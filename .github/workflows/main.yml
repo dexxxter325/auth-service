@@ -53,8 +53,6 @@ jobs:
     needs: build_and_push
     if: github.event_name == 'push'
     steps:
-      #- name: Login to Docker Hub
-       # run: docker login -u flaw1ess -p Topg778877
       - name: Reboot Container
         run: |
           docker login -u flaw1ess -p Topg778877 
@@ -66,9 +64,6 @@ jobs:
   
             # Run a new container from a new image
           docker run -d -it --name $CONTAINER_NAME -p 80:80 $REGISTRY/$IMAGE_NAME:latest
-          
-          
-  
           
         
 
