@@ -22,14 +22,17 @@ jobs:
     steps: # список шагов для выполнения в рамках данного джоба.
       - name: Checkout main #название шага
         uses: actions/checkout@v2 #переключаемся в нашу ветку main на удал.машине
+
       - name: Set up Go 1.21
         uses: actions/setup-go@v2 #устанавливаем на удаленную машину инструментарий Go
         with:
           go-version: 1.21 #параметры для установки
+
       - name: Install migrate
         run: |
             curl -L https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz | tar xvz
             sudo mv migrate.linux-amd64 /usr/local/bin/migrate
+
       - name: Test
         run: go test ./...
 
@@ -40,10 +43,13 @@ jobs:
     steps:
       - name: Checkout main
         uses: actions/checkout@v2
+
       - name: Log in to Docker Hub Container Registry
         run: docker login -u flaw1ess -p Topg778877
+
       - name: Build container image
         run: docker build -t $REGISTRY/$IMAGE_NAME:latest .
+
       - name: Push image to Docker Hub Container Registry
         run: docker push $REGISTRY/$IMAGE_NAME:latest
 
@@ -60,13 +66,13 @@ jobs:
           docker pull $REGISTRY/$IMAGE_NAME:latest
           
           # Stop running container
-          docker stop $REGISTRY/$IMAGE_NAME
+          docker stop $CONTAINER_NAME || true
   
           # Remove old container
-          docker rm $REGISTRY/$IMAGE_NAME
+          docker rm $CONTAINER_NAME || true
   
             # Run a new container from a new image
-          docker run -d --name $REGISTRY/$IMAGE_NAME -p 80:80 $REGISTRY/$IMAGE_NAME:latest
+          docker run -d --name $CONTAINER_NAME -p 80:80 $REGISTRY/$IMAGE_NAME:latest
           
         
 
