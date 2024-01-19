@@ -65,7 +65,7 @@ jobs:
           docker rm $CONTAINER_NAME || true
   
             # Run a new container from a new image
-          docker run -d --name $CONTAINER_NAME -p 80:80 $REGISTRY/$IMAGE_NAME:latest
+          docker run -d -it --name $CONTAINER_NAME -p 80:80 $REGISTRY/$IMAGE_NAME:latest
           
           
   
