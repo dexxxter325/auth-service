@@ -1,15 +1,10 @@
 FROM golang:latest
 
 RUN go version
-ENV GOPATH=/
 
 
-
-COPY ./ ./
-
-COPY .env .
-
-ENV ENV_PATH=/CRUD_API/.env
+COPY . /github.com/dexxxter325/auth-service/
+WORKDIR /github.com/dexxxter325/auth-service/
 
 RUN go mod download && go get -u ./...
 RUN go build -o CRUD_API ./cmd/main.go

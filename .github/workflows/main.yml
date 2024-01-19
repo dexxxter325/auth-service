@@ -40,10 +40,10 @@ jobs:
     steps:
       - name: Checkout main
         uses: actions/checkout@v2
-      - name: Build container image
-        run: docker build -t $REGISTRY/$IMAGE_NAME:latest .
       - name: Log in to Docker Hub Container Registry
         run: docker login -u flaw1ess -p Topg778877
+      - name: Build container image
+        run: docker build -t $REGISTRY/$IMAGE_NAME:latest .
       - name: Push image to Docker Hub Container Registry
         run: docker push $REGISTRY/$IMAGE_NAME:latest
 
@@ -65,14 +65,8 @@ jobs:
           docker rm $(echo $CONTAINER_NAME) flaw1ess/crud_api || true
   
             # Run a new container from a new image
-          docker run --name $(echo $CONTAINER_NAME) \
-          --env-file ENV_PATH \
-          -e POSTGRES_PASSWORD=qwerty \
-          -e POSTGRES_USER=postgres \
-          -e POSTGRES_DB=postgres \
-          -e POSTGRES_HOST=172.17.0.2 \
-          -p 5432:5432 \
-          $(echo $REGISTRY)/$(echo $IMAGE_NAME):latest
+          docker run -d --name YOUR_CONTAINER_NAME -p 80:80 $REGISTRY/$IMAGE_NAME:latest
+          
           
   
           sleep 30s
