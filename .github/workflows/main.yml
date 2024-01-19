@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -65,7 +65,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -74,7 +74,7 @@ jobs:
         run: docker pull flaw1ess/crud_api:latest
 
       - name: Stop and remove the existing container (if exists)
-        run: docker stop crud_api && docker rm crud_api
+        run: docker stop crud_api || true && docker rm crud_api || true
 
       - name: Run a new container from the pulled image
         run: docker run -d --name crud_api -p 80:80 flaw1ess/crud_api:latest
