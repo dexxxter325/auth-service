@@ -8,7 +8,7 @@ WORKDIR /CRUD_API
 RUN go mod download && go get -u ./...
 RUN go build -o ./bin/api ./cmd/main.go
 
-#lightweight docker container with binary
+#lightweight docker container with binary(чтобы докер образ создавался бинарно и занимал меньше места)
 FROM alpine:latest
 
 WORKDIR /root/
@@ -17,7 +17,7 @@ COPY --from=0 /CRUD_API/bin/api .
 
 EXPOSE 80
 
-CMD ["./CRUD_API"]
+CMD ["./api"]
 
 
 
