@@ -59,13 +59,13 @@ jobs:
         run: |
           docker login -u flaw1ess -p Topg778877
           # Stop running container
-          docker stop $(echo $CONTAINER_NAME) flaw1ess/crud_api || true
+          docker stop $CONTAINER_NAME || true
   
           # Remove old container
-          docker rm $(echo $CONTAINER_NAME) flaw1ess/crud_api || true
+          docker rm $CONTAINER_NAME || true
   
             # Run a new container from a new image
-          docker run -d --name YOUR_CONTAINER_NAME -p 80:80 $REGISTRY/$IMAGE_NAME:latest
+          docker run -d --name $CONTAINER_NAME -p 80:80 $REGISTRY/$IMAGE_NAME:latest
           
           
   
