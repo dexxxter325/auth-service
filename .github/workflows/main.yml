@@ -69,9 +69,7 @@ jobs:
           
           
   
-          sleep 30s
-            
-          docker exec -it $(echo $CONTAINER_NAME) migrate -path ./schema -database "postgres://postgres:qwerty@172.17.0.2:5432/postgres?sslmode=disable" up
+          
         
 
 
