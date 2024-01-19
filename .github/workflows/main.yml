@@ -78,8 +78,9 @@ jobs:
 
       - name: Run a new container from the pulled image
         run: docker run -d --name crud_api -p 80:80 \
-             --restart always \
-             flaw1ess/crud_api:latest
+          --restart always \
+          flaw1ess/crud_api:latest
+
           
         
 
