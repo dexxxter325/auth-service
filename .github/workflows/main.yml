@@ -69,13 +69,15 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Stop and remove the existing container (if exists)
-        run: docker stop crud_api || true && docker rm crud_api || true
+        run: docker stop $CONTAINER_NAME || true && docker rm $CONTAINER_NAME || true
 
       - name: Run a new container from the pulled image
         run: |
-          docker run -d --name crud_api -p 80:80 \
+          docker run -d \
+            --name $CONTAINER_NAME \
+            -p 80:80 \
             --restart always \
-            flaw1ess/crud_api:latest
+            $REGISTRY/$IMAGE_NAME:latest
           
         
 
