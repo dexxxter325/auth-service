@@ -19,10 +19,10 @@ jobs:
     runs-on: ubuntu-latest #удаленная машина(от GitHub),на кот.будут выполняться команды
     steps: # список шагов для выполнения в рамках данного джоба.
       - name: Checkout main #название шага
-        uses: actions/checkout@v2 #переключаемся в нашу ветку main на удал.машине
+        uses: actions/checkout@v4 #переключаемся в нашу ветку main на удал.машине
 
       - name: Set up Go 1.21
-        uses: actions/setup-go@v2 #устанавливаем на удаленную машину инструментарий Go
+        uses: actions/setup-go@v4 #устанавливаем на удаленную машину инструментарий Go
         with:
           go-version: 1.21 #параметры для установки
 
@@ -40,10 +40,10 @@ jobs:
     needs: test
     steps:
       - name: Checkout main
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Build container image #создаем наш докер образ на удал.машине
-        run: docker build -t $REGISTRY/$IMAGE_NAME:$TAG_NAME .
+      #- name: Build container image #создаем наш докер образ на удал.машине
+       # run: docker build -t $REGISTRY/$IMAGE_NAME:$TAG_NAME .
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
@@ -51,8 +51,17 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Push image to Docker Hub Container Registry #пушим(отправляем) новую версию изобр. в DockerHub
-        run: docker push $REGISTRY/$IMAGE_NAME:$TAG_NAME
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/$CONTAINER_NAME:$TAG_NAME
+
+
+      #- name: Push image to Docker Hub Container Registry #пушим(отправляем) новую версию изобр. в DockerHub
+       # run: docker push $REGISTRY/$IMAGE_NAME:$TAG_NAME
 
 
   deploy:
@@ -60,7 +69,7 @@ jobs:
     needs: build_and_push
     steps:
       - name: Checkout main
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
