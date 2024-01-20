@@ -151,7 +151,7 @@ func (h *Handler) UpdateProduct(c *gin.Context) {
 	//expiration := cacheTTl + time.Duration(rand.Intn(21)-10)*time.Second
 	err = RedisClient.Set(c, cacheKey, jsonProduct, cacheTTl).Err()
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error in set data to redis(update)": err.Error()})
+		c.JSON(555, gin.H{"error in set data to redis(update)": err.Error()})
 	}
 
 	c.JSON(200, gin.H{"product(updated successfully)": UpdatedProduct})
