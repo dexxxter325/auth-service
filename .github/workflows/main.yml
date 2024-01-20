@@ -15,11 +15,29 @@ env:
   TAG_NAME: "latest"
 
 jobs:
+  test: #имя процесса
+    runs-on: ubuntu-latest #удаленная машина(от GitHub),на кот.будут выполняться команды
+    steps: # список шагов для выполнения в рамках данного джоба.
+      - name: Checkout main #название шага
+        uses: actions/checkout@v4 #переключаемся в нашу ветку main на удал.машине
 
+      - name: Set up Go 1.21
+        uses: actions/setup-go@v4 #устанавливаем на удаленную машину инструментарий Go
+        with:
+          go-version: 1.21 #параметры для установки
+
+      - name: Install migrate
+        run: |
+          curl -L https://github.com/golang-migrate/migrate/releases/download/v4.14.1/migrate.linux-amd64.tar.gz | tar xvz
+          sudo mv migrate.linux-amd64 /usr/local/bin/migrate
+
+      - name: Test
+        run: go test ./...
 
   #нам нужно облако развертывания приложения ,тк оно нам создаet эндпоинт для нашего приложения, который будет доступен в интернете.После развертывания ,я получаю URL-адресс приложения
   build_and_push:
     runs-on: ubuntu-latest
+    needs: test
     steps:
       - name: Checkout main
         uses: actions/checkout@v4
