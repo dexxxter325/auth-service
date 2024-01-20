@@ -87,6 +87,7 @@ func TestIntegration(t *testing.T) {
 	signUp, err := http.Post(serv.URL+"/auth/sign-up", "application/json", bytes.NewBuffer(signUpJson))
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, signUp.StatusCode)
+	fmt.Println("signUp:", signUp.StatusCode)
 
 	signInReq := map[string]interface{}{
 		"id":       1,
@@ -97,6 +98,7 @@ func TestIntegration(t *testing.T) {
 	signInResp, err := http.Post(serv.URL+"/auth/sign-in", "application/json", bytes.NewBuffer(signInReqJson))
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, signInResp.StatusCode)
+	fmt.Println("signip:", signUp.StatusCode)
 	var signUpResponseData map[string]interface{}
 	_ = json.NewDecoder(signInResp.Body).Decode(&signUpResponseData)
 	accessToken := signUpResponseData["access_token"].(string)
@@ -112,18 +114,21 @@ func TestIntegration(t *testing.T) {
 	createProduct, err := http.DefaultClient.Do(req)
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, createProduct.StatusCode)
+	fmt.Println("post:", signUp.StatusCode)
 
 	req, err = http.NewRequest("GET", serv.URL+"/api/product", nil)
 	req.Header.Set("Authorization", "Bearer "+accessToken)
 	readAllProducts, err := http.DefaultClient.Do(req)
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, readAllProducts.StatusCode)
+	fmt.Println("get:", signUp.StatusCode)
 
 	req, err = http.NewRequest("GET", serv.URL+"/api/product/1", nil)
 	req.Header.Set("Authorization", "Bearer "+accessToken)
 	readProductById, err := http.DefaultClient.Do(req)
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, readProductById.StatusCode)
+	fmt.Println("getbyid:", signUp.StatusCode)
 
 	updateProductRequest := map[string]interface{}{ //наш обновленный запрос
 		"name":        "UpdatedProduct",
@@ -135,12 +140,14 @@ func TestIntegration(t *testing.T) {
 	updateProduct, err := http.DefaultClient.Do(req) //perform our http req
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, updateProduct.StatusCode)
+	fmt.Println("put:", signUp.StatusCode)
 
 	req, err = http.NewRequest("DELETE", serv.URL+"/api/product/1", nil)
 	req.Header.Set("Authorization", "Bearer "+accessToken)
 	deleteProduct, err := http.DefaultClient.Do(req)
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, deleteProduct.StatusCode)
+	fmt.Println("del:", signUp.StatusCode)
 
 	if err := tearDownTestDatabase(); err != nil {
 		t.Errorf("err in DeleteOurDb:%s", err)
