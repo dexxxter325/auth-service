@@ -82,7 +82,7 @@ jobs:
         run: |
           docker run -d \
             --name $CONTAINER_NAME \
-            -p 80:80 \
+            -p 81:81 \
             --restart always \
             $REGISTRY/$IMAGE_NAME:$TAG_NAME 
         
