@@ -138,6 +138,9 @@ func TestIntegration(t *testing.T) {
 	req, err = http.NewRequest("PUT", serv.URL+"/api/product/1", bytes.NewBuffer(updateProductJSON)) //create new http req
 	req.Header.Set("Authorization", "Bearer "+accessToken)
 	updateProduct, err := http.DefaultClient.Do(req) //perform our http req
+	if err != nil {
+		fmt.Printf("Error sending request: %v", err)
+	}
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, updateProduct.StatusCode)
 	fmt.Println("put:", updateProduct.StatusCode)
