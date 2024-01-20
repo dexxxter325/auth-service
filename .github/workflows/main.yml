@@ -84,7 +84,7 @@ jobs:
             --name $CONTAINER_NAME \
             -p 80:80 \
             --restart always \
-            $REGISTRY/$IMAGE_NAME:$TAG_NAME
+            $REGISTRY/$IMAGE_NAME:$TAG_NAME 
         
 
 
