@@ -5,9 +5,11 @@ import (
 	"CRUD_API/pkg/service"
 	mockservice "CRUD_API/pkg/service/mocks"
 	"bytes"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redismock/v9"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"net/http/httptest"
@@ -221,7 +223,14 @@ func TestHandler_ReadProductById(t *testing.T) {
 }
 
 func TestHandler_UpdateProduct(t *testing.T) {
-	InitRedis()
+	mockedRedisClient, mock := redismock.NewClientMock()
+	RedisClient = mockedRedisClient
+	product := CRUD_API.Products{
+		ID:          1,
+		Name:        "ok",
+		Description: "ok",
+	}
+	MarshalForRedis, _ := json.Marshal(product)
 	type Mock func(s *mockservice.MockProduct, name, description string, id int)
 	type args struct {
 		name        string
@@ -247,6 +256,7 @@ func TestHandler_UpdateProduct(t *testing.T) {
 			mock: func(s *mockservice.MockProduct, name, description string, id int) {
 				updatedProduct := CRUD_API.Products{Name: name, Description: description, ID: id}
 				s.EXPECT().Update(name, description, id).Return(updatedProduct, nil)
+				mock.ExpectSet("product:1", MarshalForRedis, cacheTTl).SetVal("nil")
 			},
 			expectedResponse:   `{"product(updated successfully)":{"id":1,"name":"ok","description":"ok"}}`,
 			expectedStatusCode: 200,
@@ -293,7 +303,8 @@ func TestHandler_UpdateProduct(t *testing.T) {
 	}
 }
 func TestHandler_DeleteProduct(t *testing.T) {
-	InitRedis()
+	mockedRedisClient, mock := redismock.NewClientMock()
+	RedisClient = mockedRedisClient
 	type Mock func(s *mockservice.MockProduct, id int)
 	tests := []struct {
 		name               string
@@ -307,6 +318,7 @@ func TestHandler_DeleteProduct(t *testing.T) {
 			id:   1,
 			mock: func(s *mockservice.MockProduct, id int) {
 				s.EXPECT().Delete(id).Return(nil)
+				mock.ExpectDel("product:1").SetVal(0)
 			},
 			expectedStatusCode: 200,
 			expectedResponse:   `"deleted successfully"`,

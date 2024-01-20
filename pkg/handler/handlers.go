@@ -2,6 +2,7 @@ package handler
 
 import (
 	"CRUD_API"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"math/rand"
@@ -40,7 +41,6 @@ func (h *Handler) CreateProduct(c *gin.Context) {
 	/*рандомное колво сек от 0 до20,затем - 10<>создаем интервал возможных знач от -10с до 10с. Это вычитается или прибавляется к cacheTTl.*/
 	cache := GetSingleton()
 	err = cache.Set(cacheKey, createdProduct, expiration)
-	fmt.Println(cacheKey, createdProduct, expiration)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error in Set data to redis(create)": err.Error()})
 		return
@@ -89,7 +89,6 @@ func (h *Handler) ReadProductById(c *gin.Context) {
 	// Шаг 1: Попытка получения данных из кэша
 	cacheKey := fmt.Sprintf("product:%d", id)
 	cachedProduct := cache.Get(cacheKey)
-	fmt.Println(cachedProduct)
 	/*cachedProduct, err := RedisClient.Get(c, cacheKey).Result()
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"err in get data from redis": err.Error()})
@@ -143,17 +142,17 @@ func (h *Handler) UpdateProduct(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error marshaling product to JSON in update": "err in service"})
 		return
 	}
-	/*cacheKey := fmt.Sprintf("product:%d", id)
+	cacheKey := fmt.Sprintf("product:%d", id)
 	jsonProduct, err := json.Marshal(UpdatedProduct)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	//expiration := cacheTTl + time.Duration(rand.Intn(21)-10)*time.Second
-	err = RedisClient.Set(c, cacheKey, jsonProduct, expiration).Err()
+	err = RedisClient.Set(c, cacheKey, jsonProduct, cacheTTl).Err()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error in set data to redis(update)": err.Error()})
-	}*/
+	}
 
 	c.JSON(200, gin.H{"product(updated successfully)": UpdatedProduct})
 }
@@ -180,12 +179,12 @@ func (h *Handler) DeleteProduct(c *gin.Context) {
 		return
 	}
 
-	/*cacheKey := fmt.Sprintf("product:%d", id)
+	cacheKey := fmt.Sprintf("product:%d", id)
 	err = RedisClient.Del(c, cacheKey).Err()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"err in delete data from redis": err.Error()})
 		return
-	}*/
+	}
 
 	c.JSON(http.StatusOK, "deleted successfully")
 }
