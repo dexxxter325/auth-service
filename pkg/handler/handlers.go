@@ -152,6 +152,7 @@ func (h *Handler) UpdateProduct(c *gin.Context) {
 	err = RedisClient.Set(c, cacheKey, jsonProduct, cacheTTl).Err()
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error in set data to redis(update)": err.Error()})
+		fmt.Println(err.Error())
 		return
 	}
 

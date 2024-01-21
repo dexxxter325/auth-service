@@ -1,6 +1,7 @@
 package main
 
 import (
+	"CRUD_API"
 	"CRUD_API/pkg/handler"
 	"CRUD_API/pkg/repository"
 	"CRUD_API/pkg/service"
@@ -8,6 +9,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/go-redis/redismock/v9"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/stretchr/testify/assert"
 	"log"
@@ -71,7 +73,8 @@ func TestIntegration(t *testing.T) {
 		fmt.Printf("err in DBtest:%s", err)
 	}
 	defer db.Close()
-	handler.InitRedis()
+	mockedRedisClient, mock := redismock.NewClientMock()
+	handler.RedisClient = mockedRedisClient
 	repos := repository.NewRepository(db)
 	services := service.NewService(repos)
 	handlers := handler.NewHandler(services)
@@ -87,7 +90,6 @@ func TestIntegration(t *testing.T) {
 	signUp, err := http.Post(serv.URL+"/auth/sign-up", "application/json", bytes.NewBuffer(signUpJson))
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, signUp.StatusCode)
-	fmt.Println("signUp:", signUp.StatusCode)
 
 	signInReq := map[string]interface{}{
 		"id":       1,
@@ -98,7 +100,6 @@ func TestIntegration(t *testing.T) {
 	signInResp, err := http.Post(serv.URL+"/auth/sign-in", "application/json", bytes.NewBuffer(signInReqJson))
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, signInResp.StatusCode)
-	fmt.Println("signin:", signInResp.StatusCode)
 	var signUpResponseData map[string]interface{}
 	_ = json.NewDecoder(signInResp.Body).Decode(&signUpResponseData)
 	accessToken := signUpResponseData["access_token"].(string)
@@ -114,21 +115,18 @@ func TestIntegration(t *testing.T) {
 	createProduct, err := http.DefaultClient.Do(req)
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, createProduct.StatusCode)
-	fmt.Println("post:", createProduct.StatusCode)
 
 	req, err = http.NewRequest("GET", serv.URL+"/api/product", nil)
 	req.Header.Set("Authorization", "Bearer "+accessToken)
 	readAllProducts, err := http.DefaultClient.Do(req)
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, readAllProducts.StatusCode)
-	fmt.Println("get:", readAllProducts.StatusCode)
 
 	req, err = http.NewRequest("GET", serv.URL+"/api/product/1", nil)
 	req.Header.Set("Authorization", "Bearer "+accessToken)
 	readProductById, err := http.DefaultClient.Do(req)
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, readProductById.StatusCode)
-	fmt.Println("getbyid:", readProductById.StatusCode)
 
 	updateProductRequest := map[string]interface{}{ //наш обновленный запрос
 		"name":        "UpdatedProduct",
@@ -136,21 +134,24 @@ func TestIntegration(t *testing.T) {
 	}
 	updateProductJSON, _ := json.Marshal(updateProductRequest)
 	req, err = http.NewRequest("PUT", serv.URL+"/api/product/1", bytes.NewBuffer(updateProductJSON)) //create new http req
+	product := CRUD_API.Products{
+		ID:          1,
+		Name:        "UpdatedProduct",
+		Description: "UpdatedDescription",
+	}
+	MarshalForRedis, _ := json.Marshal(product)
+	mock.ExpectSet("product:1", MarshalForRedis, 60*time.Hour).SetVal("nil")
 	req.Header.Set("Authorization", "Bearer "+accessToken)
 	updateProduct, err := http.DefaultClient.Do(req) //perform our http req
-	if err != nil {
-		fmt.Printf("Error sending request: %v", err)
-	}
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, updateProduct.StatusCode)
-	fmt.Println("put:", updateProduct.StatusCode)
 
 	req, err = http.NewRequest("DELETE", serv.URL+"/api/product/1", nil)
 	req.Header.Set("Authorization", "Bearer "+accessToken)
+	mock.ExpectDel("product:1").SetVal(0)
 	deleteProduct, err := http.DefaultClient.Do(req)
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, deleteProduct.StatusCode)
-	fmt.Println("del:", deleteProduct.StatusCode)
 
 	if err := tearDownTestDatabase(); err != nil {
 		t.Errorf("err in DeleteOurDb:%s", err)
