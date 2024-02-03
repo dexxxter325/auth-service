@@ -4,7 +4,6 @@ RUN go version
 
 COPY ./ /CRUD_API
 
-
 WORKDIR /CRUD_API
 
 RUN go mod download && go get -u ./...
@@ -15,7 +14,6 @@ FROM alpine:latest
 
 WORKDIR /root/
 
-COPY --from=0 /CRUD_API/.env .
 COPY --from=0 /CRUD_API/bin/api .
 
 EXPOSE 80

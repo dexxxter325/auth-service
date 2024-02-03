@@ -1,13 +1,16 @@
 version: 'latest'
 services:
   crud_api:
-    build: ./ #ищет dockerfile(в нашем случае-в текущей директории)дял взятия образа
+    build:
+      context: .
+      dockerfile: Dockerfile.local
     env_file:
       - .env
     ports:
       - 8080:8080
     depends_on:
       - db
+      - redis
     environment:
       - DB_PASSWORD=qwerty
   redis:

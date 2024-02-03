@@ -1,10 +1,14 @@
-FROM alpine:latest
+FROM golang:1.21-alpine3.19 AS builder
 
-WORKDIR /root/
+RUN go version
 
-COPY --from=0 /CRUD_API/.env
-COPY --from=0 /CRUD_API/bin/api .
+COPY ./ /CRUD_API
+
+WORKDIR /CRUD_API
+
+RUN go mod download && go get -u ./...
+RUN go build -o crud_api ./cmd/main.go
 
 EXPOSE 80
 
-CMD ["./api"]
+CMD ["./crud_api"]
