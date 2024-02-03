@@ -57,8 +57,8 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ./Dockerfile
+          context: ./CRUD_API   # Указываем контекст сборки внутри каталога CRUD_API
+          file: ./CRUD_API/Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/crud_api:latest
 
