@@ -14,6 +14,7 @@ type DB interface {
 	Query(ctx context.Context, sql string, optionsAndArgs ...interface{}) (pgx.Rows, error)
 	QueryRow(ctx context.Context, sql string, optionsAndArgs ...interface{}) pgx.Row
 	Exec(context.Context, string, ...interface{}) (pgconn.CommandTag, error)
+	Begin(ctx context.Context) (pgx.Tx, error)
 }
 
 type ProductPostgres struct {
@@ -27,11 +28,20 @@ func NewProductPostgres(DB *pgxpool.Pool) *ProductPostgres {
 func (r *ProductPostgres) Create(name, description string) (CRUD_API.Products, error) {
 	var products CRUD_API.Products
 	var err error
+	tx, err := r.DB.Begin(context.Background()) //транзакция-должно быть некс запросов-_-. они выполняются вместе,по отдельности-не выполнятся и отзовут изменения
+	if err != nil {
+		return products, fmt.Errorf("error starting transaction: %w", err)
+	}
 	request := "INSERT INTO products (name, description) VALUES ($1, $2) RETURNING id,name,description" //INSERT INTO-в какую таблицу нужно вставить новую запись
-	dorequest := r.DB.QueryRow(context.Background(), request, name, description)
+	dorequest := tx.QueryRow(context.Background(), request, name, description)
 	/*контекст-срок выполнения операции ,тут дефолт(нет ограничений)*/
 	if err := dorequest.Scan(&products.ID, &products.Name, &products.Description); err != nil { //присваиваем id наш result,чтобы в дальнейшем считывать его
+		tx.Rollback(context.Background())
 		return products, fmt.Errorf("error in scan (func Create) bracho:(:%w", err)
+	}
+	if err := tx.Commit(context.Background()); err != nil { //все гуд-подтвердаем изменения
+		tx.Rollback(context.Background())
+		return products, fmt.Errorf("error committing transaction: %w", err)
 	}
 	return products, err
 }

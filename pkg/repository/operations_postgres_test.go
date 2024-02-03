@@ -45,11 +45,12 @@ func TestProductPostgres_Create(t *testing.T) {
 				description: "TestDescription",
 			},
 			mock: func(args args) {
-
+				mock.ExpectBegin()
 				mock.ExpectQuery("INSERT INTO products").
 					WithArgs(args.name, args.description).
 					WillReturnRows(pgxmock.NewRows([]string{"id", "name", "description"}). //newRows создает новые столбцы в моковой бд
 														AddRow(1, args.name, args.description)) //заполняет столбцы заданными аргументами
+				mock.ExpectCommit()
 
 			},
 
