@@ -68,12 +68,12 @@ func TestProductPostgres_Create(t *testing.T) {
 				description: "",
 			},
 			mock: func(args args) {
-
+				mock.ExpectBegin()
 				mock.ExpectQuery("INSERT INTO products").
 					WithArgs(args.name, args.description).
 					WillReturnRows(pgxmock.NewRows([]string{"id", "name", "description"}).
 						AddRow(2, args.name, args.description).RowError(0, errors.New("some err in sec/test")))
-
+				mock.ExpectRollback()
 			},
 			wantErr: true,
 		},
