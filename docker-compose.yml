@@ -3,7 +3,7 @@ services:
   crud_api:
     build: ./ #ищет dockerfile(в нашем случае-в текущей директории)дял взятия образа
     env_file:
-      - C:\Users\prsok\GolandProjects\CRUD_API\.env
+      - ./.env
     ports:
       - 8080:8080
     depends_on:
@@ -18,7 +18,7 @@ services:
   db:
     image: postgres:latest
     env_file:
-      - C:\Users\prsok\GolandProjects\CRUD_API\.env
+      - ./.env
     volumes:
       - C:/Users/prsok/volumes/databases/postgresql/data:/var/lib/postgresql/data
     environment:

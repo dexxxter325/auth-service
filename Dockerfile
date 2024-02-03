@@ -2,7 +2,7 @@ FROM golang:1.21-alpine3.19 AS builder
 
 RUN go version
 
-COPY . /CRUD_API
+COPY ./ /CRUD_API
 
 
 WORKDIR /CRUD_API
@@ -15,7 +15,6 @@ FROM alpine:latest
 
 WORKDIR /root/
 
-COPY --from=builder /CRUD_API/.env .
 COPY --from=0 /CRUD_API/bin/api .
 
 EXPOSE 80
