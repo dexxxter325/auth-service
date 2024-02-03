@@ -1,27 +1,26 @@
-# Stage 1: Build
 FROM golang:1.21-alpine3.19 AS builder
 
 RUN go version
 
-WORKDIR /CRUD_API
+COPY ./ /CRUD_API
 
-COPY . .
+
+WORKDIR /CRUD_API
 
 RUN go mod download && go get -u ./...
 RUN go build -o ./bin/api ./cmd/main.go
 
-# Stage 2: Final Image
+#lightweight docker container with binary(чтобы докер образ создавался бинарно и занимал меньше места)
 FROM alpine:latest
 
-WORKDIR /CRUD_API
+WORKDIR /root/
 
-COPY --from=builder /CRUD_API/.env .
-COPY --from=builder /CRUD_API/bin/api .
+COPY --from=0 /CRUD_API/.env .
+COPY --from=0 /CRUD_API/bin/api .
 
 EXPOSE 80
 
 CMD ["./api"]
-
 
 #выполняется бинарный запуск приложения
 
