@@ -28,14 +28,14 @@ type CacheKey struct { //product:5
 	cache map[string]CacheData //Cache-значение нашего ключа
 }
 
-func (c *CacheKey) Clear() { //очистка кэша
-	c.cache = make(map[string]CacheData)
-}
-
 func NewCacheKey() *CacheKey {
 	return &CacheKey{
 		cache: make(map[string]CacheData),
 	}
+}
+
+func (c *CacheKey) Clear() { //очистка кэша
+	c.cache = make(map[string]CacheData)
 }
 
 var once sync.Once //пакет предост. использование ф-ции только 1 раз

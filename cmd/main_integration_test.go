@@ -24,20 +24,22 @@ import (
 // docker run --name=testdb -e POSTGRES_PASSWORD=qwerty -e POSTGRES_USER=postgres -e POSTGRES_DB=postgres -e POSTGRES_HOST=localhost -p 5432:5432 -d postgres
 func setupTestDatabase() (*pgxpool.Pool, error) {
 	//exec.Command-создает команду в терминале
-	cmd := exec.Command("docker", "run", "--name=testdb", "-e", "POSTGRES_PASSWORD=qwerty",
-		"-e", "POSTGRES_USER=postgres", "-e", "POSTGRES_DB=postgres", "-p", "5432:5432", "-d", "postgres")
+	cmd := exec.Command("docker", "run", "--name=testdb", "-e", "POSTGRES_PASSWORD=qwerty", "-p", "5431:5432", "-d", "postgres")
 	if err := cmd.Run(); err != nil { //запускает команду в терминале
 		log.Fatalf("Error building Docker image: %v", err)
 	}
 
-	migrateCmd := exec.Command("migrate", "-path", "../schema", "-database", "postgres://postgres:qwerty@localhost:5432/postgres?sslmode=disable", "up")
+	migrateCmd := exec.Command("migrate", "-path", "../schema", "-database", "postgres://postgres:qwerty@localhost:5431/postgres?sslmode=disable", "up")
 	/*../schema-используем две точки указывают на то,что папка находится на 1 уровень выше текущей директории*/
 	//вывод о том,что миграции применились:
 	migrateCmd.Stdout = os.Stdout
 	migrateCmd.Stderr = os.Stderr
 	time.Sleep(2 * time.Second) //даем серверу время запуститься перед применением миграций
 	if err := migrateCmd.Run(); err != nil {
-		log.Fatalf("Error applying migrations: %v", err)
+		output, err := migrateCmd.CombinedOutput()
+		if err != nil {
+			log.Fatalf("Migrate command output: %v", string(output))
+		}
 	}
 
 	time.Sleep(2 * time.Second) //даем докеру время создать контейнер,для дальнейшего подкл к нему
@@ -45,7 +47,7 @@ func setupTestDatabase() (*pgxpool.Pool, error) {
 	if err != nil {
 		log.Fatalf("Error parsing Postgres config: %v", err)
 	}*/
-	data := "postgres://postgres:qwerty@localhost:5432/postgres?sslmode=disable"
+	data := "postgres://postgres:qwerty@localhost:5431/postgres?sslmode=disable"
 	db, err := pgxpool.Connect(context.Background(), data)
 	if err != nil {
 		log.Fatalf("Error connecting to Postgres: %v", err)

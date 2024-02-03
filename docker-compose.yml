@@ -1,18 +1,31 @@
 version: 'latest'
 services:
   crud_api:
-    build: ./
-    command: ./CRUD_API
+    build: ./ #ищет dockerfile(в нашем случае-в текущей директории)дял взятия образа
+    env_file:
+      - C:\Users\prsok\GolandProjects\CRUD_API\.env
     ports:
       - 8080:8080
     depends_on:
       - db
     environment:
       - DB_PASSWORD=qwerty
+  redis:
+    image: "redis:latest"
+    ports:
+      - "6379:6379"
 
   db:
     image: postgres:latest
+    env_file:
+      - C:\Users\prsok\GolandProjects\CRUD_API\.env
+    volumes:
+      - C:/Users/prsok/volumes/databases/postgresql/data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=qwerty
     ports:
       - 5432:5432
+
+
+#создает и запускает контейнеры на основе собранных или уже существующих образов, учитывая указанные параметры,
+  #такие как порты, переменные окружения и другие настройки.

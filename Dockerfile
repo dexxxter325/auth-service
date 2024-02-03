@@ -13,6 +13,7 @@ FROM alpine:latest
 
 WORKDIR /root/
 
+COPY --from=0 /CRUD_API/.env .
 COPY --from=0 /CRUD_API/bin/api .
 
 EXPOSE 80
