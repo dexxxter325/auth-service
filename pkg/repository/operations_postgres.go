@@ -36,7 +36,7 @@ func (r *ProductPostgres) Create(name, description string) (CRUD_API.Products, e
 	dorequest := tx.QueryRow(context.Background(), request, name, description)
 	/*контекст-срок выполнения операции ,тут дефолт(нет ограничений)*/
 	if err := dorequest.Scan(&products.ID, &products.Name, &products.Description); err != nil { //присваиваем id наш result,чтобы в дальнейшем считывать его
-		tx.Rollback(context.Background())
+		tx.Rollback(context.Background()) //откатываем изменения
 		return products, fmt.Errorf("error in scan (func Create) bracho:(:%w", err)
 	}
 	if err := tx.Commit(context.Background()); err != nil { //все гуд-подтвердаем изменения
@@ -84,7 +84,7 @@ func (r *ProductPostgres) ReadById(id int) (CRUD_API.Products, error) {
 func (r *ProductPostgres) Update(name, description string, id int) (CRUD_API.Products, error) {
 	var product CRUD_API.Products
 	var err error
-	request := "UPDATE products SET name=$1, description=$2 WHERE ID=$3 RETURNING id, name, description"
+	request := "UPDATE products SET name=$1, description=$2 WHERE ID=$3 RETURNING id, name, description" //set-конкретное новое значение,кот.нужно присвоить
 	dorequest := r.DB.QueryRow(context.Background(), request, name, description, id)
 	if err := dorequest.Scan(&product.ID, &product.Name, &product.Description); err != nil {
 		return product, fmt.Errorf("err in update :%s", err)
